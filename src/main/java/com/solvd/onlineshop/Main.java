@@ -31,7 +31,7 @@ public class Main {
         shop.addStoreProduct(product3);
 
         shop.incrementStock(10);
-        System.out.println(shop.getShopProducts());
+        LOGGER.info(shop.getShopProducts());
         LOGGER.info(shop.getName());
         LOGGER.info("Products of the store: ");
         Printer.listProducts(shop.getShopProducts());
