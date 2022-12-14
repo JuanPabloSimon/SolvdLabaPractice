@@ -3,7 +3,7 @@ package com.solvd.onlineshop.people;
 
 import com.solvd.onlineshop.shop.IShopping;
 
-public abstract class Person implements IShopping { // implement interface
+public abstract class Person { // implement interface
     protected String name;
     protected int age;
     protected String email;

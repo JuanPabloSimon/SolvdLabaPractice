@@ -31,11 +31,16 @@ public class PaymentMethod {
         return this.available;
     }
 
+    public Double applyDiscount(Double amount) {
+        double value = amount - (amount / this.discount);
+        return value;
+    }
+
     // end of section
 
-    // getters end setters
+    // getters end set-ers
 
-    public int getDiscount() {
+    public Integer getDiscount() {
         return this.discount;
     }
 

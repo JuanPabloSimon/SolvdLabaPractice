@@ -41,9 +41,6 @@ public class Order {
 
     // getters and setters
 
-    public Order getOrder() {
-        return this;
-    }
 
     public int getTotal() {
         return this.totalValue;

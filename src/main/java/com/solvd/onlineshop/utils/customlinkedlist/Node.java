@@ -2,7 +2,7 @@ package com.solvd.onlineshop.utils.customlinkedlist;
 
 public class Node<T> {
     private T data;
-    private Node nextNode;
+    private Node<T> nextNode;
 
     public Node(T data) {
         this.data = data;

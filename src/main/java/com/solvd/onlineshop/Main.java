@@ -31,7 +31,6 @@ public class Main {
         shop.addStoreProduct(product3);
 
         shop.incrementStock(10);
-        LOGGER.info(shop.getShopProducts());
         LOGGER.info(shop.getName());
         LOGGER.info("Products of the store: ");
         Printer.listProducts(shop.getShopProducts());
@@ -45,12 +44,14 @@ public class Main {
 
         shop.signUpCostumer(customer); // costumer logged in the page
 
-        LOGGER.info("Product Selected: ");
+
+
+       LOGGER.info("Product Selected: ");
         try {
-            customer.selectProduct(shop.getProduct(customer.getUsername(), 1));
-            customer.selectProduct(shop.getProduct(customer.getUsername(), 2)); // two products selected from the store
-            customer.deleteProduct(shop.getProduct(customer.getUsername(), 1));
-            Printer.listProducts(shop.getCostumer(customer.getUsername()).getProductsInCart().getAll());
+            shop.orderProduct(customer, "Iphone 14");
+            shop.orderProduct(customer, "Iphone 13");// two products selected from the store
+            shop.deleteProduct(customer, "Iphone 13");
+            Printer.listProducts(shop.getCustomerProducts(customer));
         } catch (ProductNotFoundException | OutOfStockException | EmptyLinkedListException |
                  ElementNotFoundException e) {
             LOGGER.error(e);
@@ -62,21 +63,21 @@ public class Main {
         PaymentMethod payment = new PaymentMethod("Debit");
         PaymentMethod payment2 = new PaymentMethod("Credit");
         Currency currency = new Currency("ARS");
-        customer.selectDelivery(delivery);// Delivery Company Selected
+        shop.selectDelivery(customer, delivery);// Delivery Company Selected
         LOGGER.info(customer.getDelivery());
 
-        customer.selectPayment(payment); // Payment Method Selected
+        shop.selectPayment(customer, payment); // Payment Method Selected
         LOGGER.info(customer.getCart().getPayment());
 
-        customer.selectCurrency(currency); // Currency selected
+        shop.selectCurrency(customer, currency); // Currency selected
         LOGGER.info("Currency selected: " + customer.getCurrency());
-
 
         Printer.printDivider();
         LOGGER.info("Final Values");
 
         try {
             int total = shop.checkPurchase(customer); // Checks the values and return a total cost
+            Printer.printValues(customer);
             Printer.printDivider();
         } catch (CartEmptyException | EmptyLinkedListException e) {
             LOGGER.error(e);

@@ -1,15 +1,18 @@
 package com.solvd.onlineshop.shop;
 
 import com.solvd.onlineshop.exceptions.*;
-import com.solvd.onlineshop.products.Product;
 import com.solvd.onlineshop.people.Customer;
+import com.solvd.onlineshop.products.Product;
+import com.solvd.onlineshop.services.Currency;
+import com.solvd.onlineshop.services.DeliveryCompany;
+import com.solvd.onlineshop.services.PaymentMethod;
 import com.solvd.onlineshop.utils.Calculator;
-import org.apache.logging.log4j.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
-import java.util.Queue;
 
-public class OnlineShop implements IShop, IAccounts {
+public class OnlineShop implements IShop, IAccounts, IShopping {
     private static Logger LOGGER = LogManager.getLogger(OnlineShop.class);
     private String name;
     private String storeType;
@@ -45,10 +48,6 @@ public class OnlineShop implements IShop, IAccounts {
         logInCostumer(customer.getUsername());
     }
 
-    // hacer algo con esto public void logInCostumer(Viewer viewer) {
-    //   System.out.println("You need to have an account to logIn " + "\n Please first SignUp");
-    //}
-
     @Override
     public void logInCostumer(String username) {
         for (Customer customer : customers) {
@@ -65,9 +64,9 @@ public class OnlineShop implements IShop, IAccounts {
         }
     }
 
-    public boolean isLogged(String username) throws CustomerNotFoundException {
-        for (Customer customer : customers) {
-            if (customer.getUsername().equals(username)) {
+    public boolean isLogged(Customer customer) throws CustomerNotFoundException {
+        for (Customer custom : customers) {
+            if (custom.getUsername().equals(customer.getUsername())) {
                 return true;
             }
         }
@@ -98,13 +97,51 @@ public class OnlineShop implements IShop, IAccounts {
         }
     }
 
+    @Override
+    public void orderProduct(Customer customer, String productName) throws OutOfStockException, ProductNotFoundException {
+        Product prod = getProduct(customer , productName);
+        if (prod.getStock() > 0) {
+            customer.getCart().addProduct(prod);
+            prod.setStock(prod.getStock() - 1);
+        } else {
+            String msg = String.format("Out of stock for product %s", prod.getName());
+            throw new OutOfStockException(msg);
+        }
+    }
+
+    @Override
+    public void deleteProduct(Customer customer, String productName) throws ElementNotFoundException, EmptyLinkedListException, ProductNotFoundException {
+        Product prod = getProduct(customer, productName);
+        customer.getCart().removeProduct(prod.getProductID());
+        prod.setStock(prod.getStock() + 1);
+    }
+
+    public void selectPayment(Customer customer, PaymentMethod payment) {
+        customer.getCart().selectPayment(payment);
+    }
+
+    public void selectDelivery(Customer customer, DeliveryCompany delivery) {
+        if (delivery.isAvailable()) {
+            customer.setDelivery(delivery);
+        } else {
+            throw new DeliveryNotAvailableException("Delivery not available, please select between possible options");
+        }
+    }
+
+    public void selectCurrency(Customer customer, Currency currency) {
+        if (currency.isAvailable()) {
+            customer.setCurrency(currency);
+        } else {
+            throw new CurrencyNotAvailableException("Currency not available, please check de possible options");
+        }
+    }
 
     @Override
     public void createOrder(Customer customer) throws CartEmptyException, ElementNotFoundException, EmptyLinkedListException {
-        if (this.isLogged(customer.getUsername())) {
+        if (this.isLogged(customer)) {
             if (customer.getProductsInCart().getSize() > 0) {
                 Order order = new Order(customer, customer.getDelivery(), customer.getCart().getPayment(), checkPurchase(customer), customer.getProductsInCart().getAll(), customer.getCurrency());
-                LOGGER.info(order.getOrder());
+                LOGGER.info(order);
             } else {
                 throw new CartEmptyException("There are no products in cart.");
             }
@@ -115,11 +152,7 @@ public class OnlineShop implements IShop, IAccounts {
 
     public int checkPurchase(Customer customer) throws CartEmptyException, EmptyLinkedListException {
         if (customer.getProductsInCart().getSize() > 0) {  // Check if there are products
-            int subTotal = 0;
-            subTotal += Calculator.totalProducts(customer.getProductsInCart());
-            LOGGER.info("Total Products Value: " + customer.getCurrency().getSymbol() + customer.getCurrency().changeOfCurrency(subTotal, customer.getCurrency().getName()));
-
-            int total = Calculator.total(subTotal, customer.getDelivery().getPrice(), customer.getCart().getPayment(), customer.getCurrency());
+            int total = Calculator.total(customer);
             return total;
         } else {
             throw new CartEmptyException("There are no Products added in the cart");
@@ -133,21 +166,20 @@ public class OnlineShop implements IShop, IAccounts {
     }
 
 
-    public Product getProduct(String username, int productID) throws ProductNotFoundException {
-        if (this.isLogged(username)) {
+    public Product getProduct(Customer customer, String productName) throws ProductNotFoundException {
+        if (this.isLogged(customer)) {
             for (Product product : shopProducts) {
-                if (product.getProductID() == productID) {
+                if (product.getName() == productName) {
                     return product;
                 }
             }
-            throw new ProductNotFoundException("Product with ID: " + productID + " not found");
+            throw new ProductNotFoundException("Product: " + productName + " not found");
         }
         throw new CustomerNotFoundException("Please LogIn");
-
     }
 
 
-    public Customer getCostumer(String username) throws CustomerNotFoundException {
+    public Customer getCustomer(String username) throws CustomerNotFoundException {
         for (Customer customer : customers) {
             if (customer.getUsername().equals(username))
                 return customer;
@@ -157,6 +189,10 @@ public class OnlineShop implements IShop, IAccounts {
 
     public ArrayList<Product> getShopProducts() {
         return shopProducts;
+    }
+
+    public ArrayList<Product> getCustomerProducts(Customer customer) throws EmptyLinkedListException {
+        return customer.getProductsInCart().getAll();
     }
     // end of section
 }

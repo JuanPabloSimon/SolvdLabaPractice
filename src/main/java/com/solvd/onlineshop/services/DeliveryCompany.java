@@ -28,11 +28,10 @@ public class DeliveryCompany {
         return this.available;
     }
 
-
     // end of section
 
     // getters and setters
-    public int getPrice() {
+    public Integer getPrice() {
         return this.price;
     }
 

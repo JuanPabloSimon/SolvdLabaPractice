@@ -2,12 +2,12 @@ package com.solvd.onlineshop.shop;
 
 import com.solvd.onlineshop.exceptions.ElementNotFoundException;
 import com.solvd.onlineshop.exceptions.EmptyLinkedListException;
+import com.solvd.onlineshop.exceptions.PaymentNotAvailableException;
 import com.solvd.onlineshop.products.Product;
 import com.solvd.onlineshop.services.PaymentMethod;
 import com.solvd.onlineshop.utils.customlinkedlist.CustomLinkedList;
 import org.apache.logging.log4j.*;
 
-import java.util.ArrayList;
 import java.util.Random;
 
 
@@ -32,7 +32,6 @@ public class Cart {
         productsInCart.addElementAtStart(product);
     }
 
-
     public void removeProduct(Integer id) throws EmptyLinkedListException, ElementNotFoundException {
 
         boolean containsProduct = false;
@@ -47,8 +46,12 @@ public class Cart {
         }
     }
 
-    public int countOfProducts() {
-        return productsInCart.getSize();
+    public void selectPayment(PaymentMethod payment) {
+        if (payment.isAvailable()) {
+            setPayment(payment);
+        } else {
+            throw new PaymentNotAvailableException("Payment not available, select between Credit or Debit");
+        }
     }
 
     // getters and setters methods
