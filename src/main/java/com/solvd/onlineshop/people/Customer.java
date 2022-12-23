@@ -1,12 +1,12 @@
 package com.solvd.onlineshop.people;
 
-import com.solvd.onlineshop.exceptions.*;
-import com.solvd.onlineshop.shop.Cart;
 import com.solvd.onlineshop.products.Product;
 import com.solvd.onlineshop.services.Currency;
 import com.solvd.onlineshop.services.DeliveryCompany;
+import com.solvd.onlineshop.shop.Cart;
 import com.solvd.onlineshop.utils.customlinkedlist.CustomLinkedList;
-import org.apache.logging.log4j.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Objects;
 
@@ -46,6 +46,9 @@ public class Customer extends Person {
         return this.cart.getProducts();
     }
 
+    public Boolean getisInStore() {
+        return this.isInStore;
+    }
     public String getUsername() {
         return this.username;
     }

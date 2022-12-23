@@ -2,6 +2,8 @@ package com.solvd.onlineshop.shop;
 
 import com.solvd.onlineshop.people.Customer;
 
+import java.util.List;
+
 public interface IAccounts {
 
     public void signUpCostumer(Customer customer);
@@ -11,4 +13,6 @@ public interface IAccounts {
     public void logInCostumer(String username);
 
     public void logOut(String username);
+
+    public List<Customer> filterAccountsLogged();
 }

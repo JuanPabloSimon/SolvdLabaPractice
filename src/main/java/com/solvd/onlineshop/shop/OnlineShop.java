@@ -77,6 +77,12 @@ public class OnlineShop implements IShop, IAccounts, IShopping {
         return false;
     }
 
+    @Override
+    public List<Customer> filterAccountsLogged() {
+        List<Customer> accountsLogged = Arrays.asList(customers.stream().filter(c -> c.getisInStore().equals("true")).toArray(Customer[]::new));
+        return accountsLogged;
+    }
+
     public boolean isLogged(Predicate<Customer> predicate, String username) {
         boolean test = predicate.test(getCustomer(username));
         return test;
@@ -99,8 +105,7 @@ public class OnlineShop implements IShop, IAccounts, IShopping {
 
     @Override
     public List<Product> filterProdByPrice(Double maxValue, Double minValue) {
-        Product[] filteredProds = shopProducts.stream().filter(p -> p.getPrice() >= minValue && p.getPrice() <= maxValue).toArray(Product[]::new);
-        List<Product> prods = Arrays.asList(filteredProds);
+        List<Product> prods = Arrays.asList(shopProducts.stream().filter(p -> p.getPrice() >= minValue && p.getPrice() <= maxValue).toArray(Product[]::new));
         return prods;
     }
 
