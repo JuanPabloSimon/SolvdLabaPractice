@@ -4,9 +4,11 @@ import com.solvd.onlineshop.exceptions.ElementNotFoundException;
 import com.solvd.onlineshop.exceptions.EmptyLinkedListException;
 import com.solvd.onlineshop.exceptions.PaymentNotAvailableException;
 import com.solvd.onlineshop.products.Product;
-import com.solvd.onlineshop.services.PaymentMethod;
+import com.solvd.onlineshop.services.Cards;
+import com.solvd.onlineshop.services.Payment;
 import com.solvd.onlineshop.utils.customlinkedlist.CustomLinkedList;
-import org.apache.logging.log4j.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Random;
 
@@ -15,7 +17,8 @@ public class Cart {
     private static Logger LOGGER = LogManager.getLogger(Cart.class);
     private CustomLinkedList<Product> productsInCart = new CustomLinkedList<>();
     private final int cartId;
-    private PaymentMethod payment;
+    private Payment payment;
+    private Cards card;
     Random rand = new Random();
 
     // constructor section
@@ -46,7 +49,7 @@ public class Cart {
         }
     }
 
-    public void selectPayment(PaymentMethod payment) {
+    public void selectPayment(Payment payment) {
         if (payment.isAvailable()) {
             setPayment(payment);
         } else {
@@ -54,17 +57,25 @@ public class Cart {
         }
     }
 
+    public void selectCard(String card) {
+        this.card = payment.getCard(card);
+    }
+
     // getters and setters methods
     public CustomLinkedList<Product> getProducts() {
         return productsInCart;
     }
 
-    public void setPayment(PaymentMethod payment) {
+    public void setPayment(Payment payment) {
         this.payment = payment;
     }
 
-    public PaymentMethod getPayment() {
+    public Payment getPayment() {
         return this.payment;
+    }
+
+    public Cards getCard( ){
+        return this.card;
     }
     // end of section
 }

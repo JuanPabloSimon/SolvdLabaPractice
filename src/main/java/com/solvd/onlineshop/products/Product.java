@@ -34,6 +34,9 @@ public class Product {
         return this.productID;
     }
 
+    public String getCategory() {
+        return this.category;
+    }
     public void setStock(int stock) {
         this.stock = stock;
     }

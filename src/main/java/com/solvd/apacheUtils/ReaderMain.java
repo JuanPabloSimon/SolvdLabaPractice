@@ -12,7 +12,6 @@ import java.util.HashMap;
 public class ReaderMain {
     public static void wordCounter(String inputPath, String outputPath) throws IOException {
         HashMap<String, Integer> wordOccurrences = new HashMap<>();
-
         String[] words = StringUtils.lowerCase(FileUtils.readFileToString(new File(inputPath), StandardCharsets.UTF_8)).split("\\W+");
         for (String word : words) {
             if (wordOccurrences.containsKey(word)) {
@@ -29,6 +28,6 @@ public class ReaderMain {
     }
 
     public static void main(String[] args) throws IOException {
-        wordCounter("src/main/resources/article.txt", "src/main/java/com/solvd/apacheUtils/answer.txt");
+        wordCounter("src/main/resources/article.txt", "src/main/resources/answer.txt");
     }
 }

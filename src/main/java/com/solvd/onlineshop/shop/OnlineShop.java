@@ -5,12 +5,16 @@ import com.solvd.onlineshop.people.Customer;
 import com.solvd.onlineshop.products.Product;
 import com.solvd.onlineshop.services.Currency;
 import com.solvd.onlineshop.services.DeliveryCompany;
-import com.solvd.onlineshop.services.PaymentMethod;
+import com.solvd.onlineshop.services.Payment;
 import com.solvd.onlineshop.utils.Calculator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.Predicate;
 
 public class OnlineShop implements IShop, IAccounts, IShopping {
     private static Logger LOGGER = LogManager.getLogger(OnlineShop.class);
@@ -73,28 +77,31 @@ public class OnlineShop implements IShop, IAccounts, IShopping {
         return false;
     }
 
+    public boolean isLogged(Predicate<Customer> predicate, String username) {
+        boolean test = predicate.test(getCustomer(username));
+        return test;
+    }
+
     // Store
-
     @Override
-    public void addStoreProduct(Product product) {
-        shopProducts.add(product);
+    public void modifyProduct(Product product, BiConsumer<Product, ArrayList<Product>> supplier) {
+        supplier.accept(product, shopProducts);
+    }
+    // Handle Product exception
+    @Override
+    public void incrementStock(Product prod, Integer stock, BiConsumer<Product, Integer> consumer) {
+        consumer.accept(prod, stock);
+    }
+
+    public void incrementStock(Integer stock, BiConsumer<ArrayList<Product>, Integer> consumer) {
+        consumer.accept(shopProducts, stock);
     }
 
     @Override
-    public void incrementStock(Product product, int stock) throws ProductNotFoundException {
-        for (Product prod : shopProducts) {
-            if (prod.getProductID() == product.getProductID()) {
-                prod.setStock(stock);
-                return;
-            }
-        }
-        throw new ProductNotFoundException("Product not found");
-    }
-
-    public void incrementStock(int stock) {
-        for (Product product : shopProducts) {
-            product.setStock(stock);
-        }
+    public List<Product> filterProdByPrice(Double maxValue, Double minValue) {
+        Product[] filteredProds = shopProducts.stream().filter(p -> p.getPrice() >= minValue && p.getPrice() <= maxValue).toArray(Product[]::new);
+        List<Product> prods = Arrays.asList(filteredProds);
+        return prods;
     }
 
     @Override
@@ -116,8 +123,12 @@ public class OnlineShop implements IShop, IAccounts, IShopping {
         prod.setStock(prod.getStock() + 1);
     }
 
-    public void selectPayment(Customer customer, PaymentMethod payment) {
+    public void selectPayment(Customer customer, Payment payment) {
         customer.getCart().selectPayment(payment);
+    }
+
+    public void selectCard(Customer customer, String card) {
+        customer.getCart().selectCard(card);
     }
 
     public void selectDelivery(Customer customer, DeliveryCompany delivery) {
@@ -140,7 +151,7 @@ public class OnlineShop implements IShop, IAccounts, IShopping {
     public void createOrder(Customer customer) throws CartEmptyException, ElementNotFoundException, EmptyLinkedListException {
         if (this.isLogged(customer)) {
             if (customer.getProductsInCart().getSize() > 0) {
-                Order order = new Order(customer, customer.getDelivery(), customer.getCart().getPayment(), checkPurchase(customer), customer.getProductsInCart().getAll(), customer.getCurrency());
+                Order order = new Order(customer, customer.getDelivery(), customer.getCart().getCard(), getTotalPrice(customer), customer.getProductsInCart().getAll(), customer.getCurrency());
                 LOGGER.info(order);
             } else {
                 throw new CartEmptyException("There are no products in cart.");
@@ -150,22 +161,12 @@ public class OnlineShop implements IShop, IAccounts, IShopping {
         }
     }
 
-    public int checkPurchase(Customer customer) throws CartEmptyException, EmptyLinkedListException {
-        if (customer.getProductsInCart().getSize() > 0) {  // Check if there are products
-            int total = Calculator.total(customer);
-            return total;
-        } else {
-            throw new CartEmptyException("There are no Products added in the cart");
-        }
-    }
     // end of section
 
     // getters and setters
     public String getName() {
         return this.name;
     }
-
-
     public Product getProduct(Customer customer, String productName) throws ProductNotFoundException {
         if (this.isLogged(customer)) {
             for (Product product : shopProducts) {
@@ -177,8 +178,14 @@ public class OnlineShop implements IShop, IAccounts, IShopping {
         }
         throw new CustomerNotFoundException("Please LogIn");
     }
-
-
+    public int getTotalPrice(Customer customer) throws CartEmptyException, EmptyLinkedListException {
+        if (customer.getProductsInCart().getSize() > 0) {  // Check if there are products
+            Integer total = Calculator.total(customer, (amount, card) -> amount - (amount / card.getDiscount()));
+            return total;
+        } else {
+            throw new CartEmptyException("There are no Products added in the cart");
+        }
+    }
     public Customer getCustomer(String username) throws CustomerNotFoundException {
         for (Customer customer : customers) {
             if (customer.getUsername().equals(username))
