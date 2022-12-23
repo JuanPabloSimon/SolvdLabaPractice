@@ -14,9 +14,6 @@ public class Dog {
     public String getName() {
         return name;
     }
-    public Integer getAge() {
-        return this.age;
-    }
     public void setAge(Integer age) {
         this.age = age;
     }

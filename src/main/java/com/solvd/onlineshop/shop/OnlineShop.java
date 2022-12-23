@@ -11,10 +11,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiConsumer;
-import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class OnlineShop implements IShop, IAccounts, IShopping {
     private static Logger LOGGER = LogManager.getLogger(OnlineShop.class);
@@ -79,14 +78,17 @@ public class OnlineShop implements IShop, IAccounts, IShopping {
 
     @Override
     public List<Customer> filterAccountsLogged() {
-        List<Customer> accountsLogged = Arrays.asList(customers.stream().filter(c -> c.getisInStore().equals("true")).toArray(Customer[]::new));
-        return accountsLogged;
+        return customers.stream()
+                .filter(c -> c.getisInStore().equals("true"))
+                .collect(Collectors.toCollection(ArrayList<Customer>::new));
+
     }
 
-    public boolean isLogged(Predicate<Customer> predicate, String username) {
+    // Ask Sergey How to use this.
+    /*public boolean isLogged(Predicate<Customer> predicate, String username) {
         boolean test = predicate.test(getCustomer(username));
         return test;
-    }
+    }*/
 
     // Store
     @Override
@@ -105,8 +107,9 @@ public class OnlineShop implements IShop, IAccounts, IShopping {
 
     @Override
     public List<Product> filterProdByPrice(Double maxValue, Double minValue) {
-        List<Product> prods = Arrays.asList(shopProducts.stream().filter(p -> p.getPrice() >= minValue && p.getPrice() <= maxValue).toArray(Product[]::new));
-        return prods;
+        return shopProducts.stream()
+                .filter(p -> p.getPrice() >= minValue && p.getPrice() <= maxValue)
+                .collect(Collectors.toCollection(ArrayList<Product>::new));
     }
 
     @Override

@@ -4,13 +4,15 @@ import com.solvd.onlineshop.exceptions.PaymentNotAvailableException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class Payment {
     private static Logger LOGGER = LogManager.getLogger(Payment.class);
     private String method;
-    private Cards[] paymentMethods;
+    private ArrayList<Cards> paymentMethods;
     private boolean available = true;
 
     // constructor section
@@ -18,11 +20,15 @@ public class Payment {
         switch (method.toLowerCase()) {
             case "debit":
                 this.method = "debit";
-                paymentMethods = Arrays.stream(Cards.values()).filter(p -> p.getType().equals("debit")).toArray(Cards[]::new);
+                paymentMethods = Arrays.stream(Cards.values())
+                        .filter(p -> p.getType().equals("debit"))
+                        .collect(Collectors.toCollection(ArrayList<Cards>::new));
                 break;
             case "credit":
                 this.method = "credit";
-                paymentMethods = Arrays.stream(Cards.values()).filter(p -> p.getDiscount().equals("credit")).toArray(Cards[]::new);
+                paymentMethods = Arrays.stream(Cards.values())
+                        .filter(p -> p.getDiscount().equals("credit"))
+                        .collect(Collectors.toCollection(ArrayList<Cards>::new));
                 break;
             default:
                 throw new PaymentNotAvailableException("Payment not available, select between credit and debit");
@@ -37,11 +43,6 @@ public class Payment {
         return this.available;
     }
 
-
-//    public Double applyDiscount(Discountable<Double, Cards> discountable) {
-//        discountable.apply();
-//    }
-
     // end of section
 
     // getters end set-ers
@@ -50,11 +51,13 @@ public class Payment {
             LOGGER.info(payment.name());
         }
     }
-    public Cards[] getPaymentMethods() {
+    public ArrayList<Cards> getPaymentMethods() {
         return this.paymentMethods;
     }
     public Cards getCard(String card) {
-        return Arrays.stream(paymentMethods).filter(x -> x.name().toLowerCase().equals(card.toLowerCase())).findAny().orElse(null);
+        return paymentMethods.stream()
+                .filter(x -> x.name().toLowerCase().equals(card.toLowerCase()))
+                .findAny().orElse(null);
     }
 
     public void setAvailable(boolean value) {

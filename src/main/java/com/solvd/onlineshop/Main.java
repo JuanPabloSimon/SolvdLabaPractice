@@ -73,8 +73,6 @@ public class Main {
 
         shop.signUpCostumer(customer); // costumer logged in the page
 
-
-
        LOGGER.info("Product Selected: ");
         try {
             shop.orderProduct(customer, "Iphone 14");
@@ -128,38 +126,6 @@ public class Main {
             LOGGER.error(e);
         }
 
-
-
-        /*Printer.printDivider();
-        Printer.printDivider();
-
-        shop.signUpCostumer(costumer2);
-
-        costumer2.selectProduct(shop.getProduct(costumer.getUsername(), 1));
-        costumer2.selectProduct(shop.getProduct(costumer.getUsername(), 2)); // two products selected from the store
-        // costumer2.deleteProduct(shop.getProduct(costumer.getUsername(), 2)); // one product eliminated from the store
-        System.out.println("Product Selected: ");
-
-        Printer.listProducts(costumer2.getProductsInCart());
-
-        costumer2.selectDelivery(delivery2);// Delivery Company Selected
-        System.out.println(costumer2.getDelivery());
-
-        costumer2.selectPayment(payment2);
-        System.out.println(costumer2.getCart().getPayment());
-
-        costumer2.selectCurrency(currency);
-        System.out.println("Currency selected: " + costumer2.getCurrency());
-
-        Printer.printDivider();
-        System.out.println("Final Values");
-
-        int total2 = shop.checkPurchase(costumer2); // Checks the values and return a total cost
-
-        Printer.printDivider();
-
-        System.out.println("Order created and sent");
-        shop.createOrder(costumer2); // Create an order and save it in an array of orders proper of the Shop*/
     }
 }
 

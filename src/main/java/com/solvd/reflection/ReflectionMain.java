@@ -36,7 +36,6 @@ public class ReflectionMain {
         Printer.printDivider();
 
         // METHODS
-
         Method[] dogMethods = myDog.getClass().getDeclaredMethods();
         for (Method method : dogMethods) {
             System.out.println(method.getName() + "-  Return type: "+  method.getReturnType());
