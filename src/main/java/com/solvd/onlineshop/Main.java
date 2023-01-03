@@ -75,9 +75,30 @@ public class Main {
 
        LOGGER.info("Product Selected: ");
         try {
-            shop.orderProduct(customer, "Iphone 14");
-            shop.orderProduct(customer, "Iphone 13");// two products selected from the store
-            shop.deleteProduct(customer, "Iphone 13");
+            shop.orderProduct(customer, "Iphone 14", (c) -> {
+                for (Customer custom : shop.getCustomers()) {
+                    if (custom.getUsername().equals(c.getUsername())) {
+                        return true;
+                    }
+                }
+                return false;
+            });
+            shop.orderProduct(customer, "Iphone 13", (c) -> {
+                for (Customer custom : shop.getCustomers()) {
+                    if (custom.getUsername().equals(c.getUsername())) {
+                        return true;
+                    }
+                }
+                return false;
+            });// two products selected from the store
+            shop.deleteProduct(customer, "Iphone 13", (c) -> {
+                for (Customer custom : shop.getCustomers()) {
+                    if (custom.getUsername().equals(c.getUsername())) {
+                        return true;
+                    }
+                }
+                return false;
+            });
             Printer.listProducts(shop.getCustomerProducts(customer),
                     (prods) -> {
                         for (Object prod : prods) {
@@ -110,7 +131,7 @@ public class Main {
 
 
         try {
-            int total = shop.getTotalPrice(customer); // Checks the values and return a total cost
+            int total = shop.getTotalPrice(customer, (amount, card) -> amount - (amount / card.getDiscount())); // Checks the values and return a total cost
             Printer.printValues(customer,
                     (amount, card) -> amount - (amount / card.getDiscount()));
             Printer.printDivider();
@@ -120,7 +141,14 @@ public class Main {
 
         try {
             LOGGER.info("Order created and sent");
-            shop.createOrder(customer); // Create an order and save it in an array of orders proper of the Shop
+            shop.createOrder(customer, (cust) -> {
+                for (Customer custom : shop.getCustomers()) {
+                    if (custom.getUsername().equals(cust.getUsername())) {
+                        return true;
+                    }
+                }
+                return false;
+            } , (amount, card) -> amount - (amount / card.getDiscount()) ); // Create an order and save it in an array of orders proper of the Shop
         } catch (CartEmptyException | CustomerNotFoundException | ElementNotFoundException |
                  EmptyLinkedListException e) {
             LOGGER.error(e);
