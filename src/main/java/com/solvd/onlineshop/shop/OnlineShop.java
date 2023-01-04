@@ -59,6 +59,7 @@ public class OnlineShop implements IShop, IAccounts, IShopping {
         for (Customer customer : customers) {
             if (customer.getUsername().equals(username))
                 customer.setInStore(true);
+                customer.createOrder();
         }
     }
 
@@ -74,7 +75,7 @@ public class OnlineShop implements IShop, IAccounts, IShopping {
     @Override
     public List<Customer> filterAccountsLogged() {
         return customers.stream()
-                .filter(c -> c.getisInStore().equals("true"))
+                .filter(c -> c.getIsInStore().equals("true"))
                 .collect(Collectors.toCollection(ArrayList<Customer>::new));
 
     }
@@ -149,12 +150,15 @@ public class OnlineShop implements IShop, IAccounts, IShopping {
         }
     }
 
+
     @Override
-    public void createOrder(Customer customer, Predicate<Customer> p, Discountable<Double, Cards> d) throws CartEmptyException, ElementNotFoundException, EmptyLinkedListException {
+    public void finishOrder(Customer customer, Predicate<Customer> p, Discountable<Double,Cards> d) throws CartEmptyException, EmptyLinkedListException {
         if (this.isLogged(p, customer.getUsername())) {
             if (customer.getProductsInCart().getSize() > 0) {
-                Order order = new Order(customer, customer.getDelivery(), customer.getCart().getCard(), getTotalPrice(customer, d), customer.getProductsInCart().getAll(), customer.getCurrency());
-                LOGGER.info(order);
+                customer.getOrder().setProducts(customer.getProductsInCart().getAll());
+                customer.getOrder().setCardSelected(customer.getCart().getCard());
+                customer.getOrder().send(d);
+                this.orders.add(customer.getOrder());
             } else {
                 throw new CartEmptyException("There are no products in cart.");
             }

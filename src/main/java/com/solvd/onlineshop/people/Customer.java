@@ -4,6 +4,7 @@ import com.solvd.onlineshop.products.Product;
 import com.solvd.onlineshop.services.Currency;
 import com.solvd.onlineshop.services.DeliveryCompany;
 import com.solvd.onlineshop.shop.Cart;
+import com.solvd.onlineshop.shop.Order;
 import com.solvd.onlineshop.utils.customlinkedlist.CustomLinkedList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,8 +16,9 @@ public class Customer extends Person {
     private String username;
     private Cart cart;
     private boolean isInStore;
-    private DeliveryCompany delivery;
-    private Currency currency;
+    private Order order;
+//    private DeliveryCompany delivery;
+//    private Currency currency;
 
     // constructor section
     public Customer(String username, String firstname, String lastname, int age, String email, String address) {
@@ -26,7 +28,11 @@ public class Customer extends Person {
     }
 
 
+
     // end of section
+    public  void createOrder() {
+        this.order = new Order(this);
+    }
 
     // getters and setter section
 
@@ -35,18 +41,20 @@ public class Customer extends Person {
     }
 
     public void setDelivery(DeliveryCompany delivery) {
-        this.delivery = delivery;
+        this.order.setDeliveryCompany(delivery);
+//        this.delivery = delivery; // delete this
     }
 
     public void setCurrency(Currency currency) {
-        this.currency = currency;
+        this.order.setCurrency(currency);
+//        this.currency = currency; // delete this
     }
 
     public CustomLinkedList<Product> getProductsInCart() {
         return this.cart.getProducts();
     }
 
-    public Boolean getisInStore() {
+    public Boolean getIsInStore() {
         return this.isInStore;
     }
     public String getUsername() {
@@ -57,13 +65,17 @@ public class Customer extends Person {
         return this.cart;
     }
 
-    public DeliveryCompany getDelivery() {
-        return this.delivery;
+    public Order getOrder() {
+        return order;
     }
 
-    public Currency getCurrency() {
-        return this.currency;
-    }
+//    public DeliveryCompany getDelivery() {
+//        return this.delivery;
+//    }
+
+//    public Currency getCurrency() {
+//        return this.currency;
+//    }
 
     // end of section
 

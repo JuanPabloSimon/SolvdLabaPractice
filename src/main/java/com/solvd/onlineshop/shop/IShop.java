@@ -1,8 +1,6 @@
 package com.solvd.onlineshop.shop;
 
 import com.solvd.onlineshop.exceptions.CartEmptyException;
-import com.solvd.onlineshop.exceptions.CustomerNotFoundException;
-import com.solvd.onlineshop.exceptions.ElementNotFoundException;
 import com.solvd.onlineshop.exceptions.EmptyLinkedListException;
 import com.solvd.onlineshop.lambdas.Discountable;
 import com.solvd.onlineshop.people.Customer;
@@ -24,5 +22,5 @@ public interface IShop {
 
     public void incrementStock(Product product, Integer stock, BiConsumer<Product, Integer> consumer);
 
-    public void createOrder(Customer customer, Predicate<Customer> p, Discountable<Double, Cards> d) throws CustomerNotFoundException, CartEmptyException, ElementNotFoundException, EmptyLinkedListException;
+    public void finishOrder(Customer customer, Predicate<Customer> p, Discountable<Double, Cards> d) throws CartEmptyException, EmptyLinkedListException;
 }

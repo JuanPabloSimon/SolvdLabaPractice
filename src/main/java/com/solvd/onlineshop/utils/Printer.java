@@ -24,8 +24,8 @@ public class Printer {
     }
 
     public static void printValues(Customer customer, Discountable<Double, Cards> discounter) throws EmptyLinkedListException {
-        Double prodsValue = customer.getCurrency().changeOfCurrency(Calculator.totalProducts(customer.getProductsInCart()),
-                customer.getCurrency().getCurrencyType(),
+        Double prodsValue = customer.getOrder().getCurrency().changeOfCurrency(Calculator.totalProducts(customer.getProductsInCart()),
+                customer.getOrder().getCurrency().getCurrencyType(),
                 (v, currency) -> {
                     switch (currency.name().toLowerCase()) {
                         case "dolar":
@@ -40,8 +40,8 @@ public class Printer {
                             throw new CurrencyNotAvailableException("Currency not available");
                     }
                 });
-        Double deliveryValue = customer.getCurrency().changeOfCurrency(customer.getDelivery().getPrice(),
-                customer.getCurrency().getCurrencyType(),
+        Double deliveryValue = customer.getOrder().getCurrency().changeOfCurrency(customer.getOrder().getDeliveryCompany().getPrice(),
+                customer.getOrder().getCurrency().getCurrencyType(),
                 (v, currency) -> {
                     switch (currency.name().toLowerCase()) {
                         case "dolar":
@@ -57,9 +57,9 @@ public class Printer {
                     }
                 });
         Double total = discounter.apply(prodsValue + deliveryValue, customer.getCart().getCard());
-        LOGGER.info("Total Products Value: " + customer.getCurrency().getCurrencyType().getCurrencySymbol() + prodsValue.intValue());
-        LOGGER.info("Delivery Value: " + customer.getCurrency().getCurrencyType().getCurrencySymbol() + deliveryValue.intValue());
-        LOGGER.info("Total: " + customer.getCurrency().getCurrencyType().getCurrencySymbol() + total.intValue());
+        LOGGER.info("Total Products Value: " + customer.getOrder().getCurrency().getCurrencyType().getCurrencySymbol() + prodsValue.intValue());
+        LOGGER.info("Delivery Value: " + customer.getOrder().getCurrency().getCurrencyType().getCurrencySymbol() + deliveryValue.intValue());
+        LOGGER.info("Total: " + customer.getOrder().getCurrency().getCurrencyType().getCurrencySymbol() + total.intValue());
     }
 
 }

@@ -119,12 +119,12 @@ public class Main {
 
         // selection of services
         shop.selectDelivery(customer, delivery);// Delivery Company Selected
-        LOGGER.info(customer.getDelivery());
+        LOGGER.info(customer.getOrder().getDeliveryCompany());
         shop.selectPayment(customer, payment); // Payment Method Selected
         shop.selectCard(customer, "mastercard");
         LOGGER.info(customer.getCart().getCard());
         shop.selectCurrency(customer, currency); // Currency selected
-        LOGGER.info("Currency selected: " + customer.getCurrency());
+        LOGGER.info("Currency selected: " + customer.getOrder().getCurrency());
 
         Printer.printDivider();
         LOGGER.info("Final Values");
@@ -140,23 +140,22 @@ public class Main {
         }
 
         try {
-            LOGGER.info("Order created and sent");
-            shop.createOrder(customer, (cust) -> {
+           // Create an order and save it in an array of orders proper of the Shop
+            shop.finishOrder(customer, (cust) -> {
                 for (Customer custom : shop.getCustomers()) {
                     if (custom.getUsername().equals(cust.getUsername())) {
                         return true;
                     }
                 }
                 return false;
-            } , (amount, card) -> amount - (amount / card.getDiscount()) ); // Create an order and save it in an array of orders proper of the Shop
-        } catch (CartEmptyException | CustomerNotFoundException | ElementNotFoundException |
+            }, (amount, card) -> amount - (amount / card.getDiscount()));
+            LOGGER.info(customer.getOrder().toString());
+        } catch (CartEmptyException | CustomerNotFoundException |
                  EmptyLinkedListException e) {
             LOGGER.error(e);
         }
 
     }
 }
-
-// chanchanchaaaaaan
 
 //

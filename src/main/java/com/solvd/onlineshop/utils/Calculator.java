@@ -27,10 +27,10 @@ public class Calculator {
 
     public static Integer total(Customer customer, Discountable<Double, Cards> discounter) throws EmptyLinkedListException{
         Integer subTotal = totalProducts(customer.getProductsInCart());
-        subTotal += customer.getDelivery().getPrice();
-        Double value = customer.getCurrency().changeOfCurrency(
+        subTotal += customer.getOrder().getDeliveryCompany().getPrice();
+        Double value = customer.getOrder().getCurrency().changeOfCurrency(
                 subTotal,
-                customer.getCurrency().getCurrencyType(),
+                customer.getOrder().getCurrency().getCurrencyType(),
                 (v, currency) -> {
                     switch (currency.name().toLowerCase()) {
                         case "dolar":
