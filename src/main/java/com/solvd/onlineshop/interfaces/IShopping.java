@@ -1,4 +1,4 @@
-package com.solvd.onlineshop.shop;
+package com.solvd.onlineshop.interfaces;
 
 import com.solvd.onlineshop.exceptions.ElementNotFoundException;
 import com.solvd.onlineshop.exceptions.EmptyLinkedListException;

@@ -1,66 +1,80 @@
 package com.solvd.reflection;
 
+import com.solvd.onlineshop.people.Customer;
+import com.solvd.onlineshop.products.Product;
+import com.solvd.onlineshop.shop.OnlineShop;
 import com.solvd.onlineshop.utils.Printer;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
+import java.lang.reflect.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.function.BiConsumer;
+
 
 public class ReflectionMain {
-    public static void main(String[] args) throws Exception {
-        Dog myDog = new Dog("Coral", 1, "Light-brown");
+    private static final Logger LOGGER = LogManager.getLogger(ReflectionMain.class);
 
-        // FIELDS
+    public static void main(String[] args)
+            throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        Class<?> shopClass = Class.forName("com.solvd.onlineshop.shop.OnlineShop");
+        Object shop = shopClass.getConstructor(String.class, String.class).newInstance("Apple", "Technology Shop");
+        Class<?> clientClass = Class.forName("com.solvd.onlineshop.people.Customer");
+        Object client = clientClass.getConstructor(String.class, String.class, String.class, Integer.class, String.class, String.class).newInstance("JuanS", "Juan", "Simon", 21, "jsimon@mail.com", "Street 16 345");
 
-        Field[] dogFields = myDog.getClass().getDeclaredFields();
-        for (Field field : dogFields) {
-            System.out.println(field.getName());
+
+        // Print information about class
+        LOGGER.info(String.format(
+                "Parent class of %s is %s", shopClass.getSimpleName(), shopClass.getSuperclass().getSimpleName()
+        ));
+
+        // Print interfaces
+        Class<?>[] interfaces = {};
+        Class<?> currentClass = shopClass;
+        while (currentClass != null) {
+            interfaces = ArrayUtils.addAll(interfaces, currentClass.getInterfaces());
+            currentClass = currentClass.getSuperclass();
         }
+        LOGGER.info(String.format(
+                "%s implements %s\n",
+                shopClass.getSimpleName(),
+                Arrays.toString(Arrays.stream(interfaces).map(Class::getSimpleName).toArray())
+        ));
 
-        Printer.printDivider();
+        // Print fields
+        printFields(shopClass);
+        printFields(shopClass.getSuperclass());
 
-        // Trying to change the value of a private field without reflection (it would fail)
-        /*for (Field field : dogFields) {
-            if (field.getName().equals("name")) {
-                field.name = "Toto";
-            }
-        }*/
+        // Print methods
+        printMethods(shopClass);
+        printMethods(shopClass.getSuperclass());
 
-        // Changing the value of a private field with reflection
-        for (Field field : dogFields) {
-            if (field.getName().equals("name")) {
-                field.setAccessible(true);
-                field.set(myDog, "Toto");
-            }
+        // Call methods with parameters
+        LOGGER.info("Calling methods using reflection.");
+        shopClass.getMethod("signUpCostumer", String.class, String.class, String.class, Integer.class, String.class, String.class).invoke(shop, "JuanS", "Juan", "Simon", 21, "jsimon@mail.com", "Street 16 345" );
+        System.out.println(shopClass.getMethod("getCustomers").invoke(shop));
+    }
+
+    public static void printFields(Class<?> objectClass) {
+        LOGGER.info(String.format("Declared fields of %s: ", objectClass.getSimpleName()));
+        for (Field field : objectClass.getDeclaredFields()) {
+            LOGGER.info(field.getName() + ":");
+            LOGGER.info("    modifiers: " + Modifier.toString(field.getModifiers()));
+            LOGGER.info("    type: " + field.getType());
         }
-        System.out.println(myDog.getName());
-        Printer.printDivider();
+        LOGGER.info("\n");
+    }
 
-        // METHODS
-        Method[] dogMethods = myDog.getClass().getDeclaredMethods();
-        for (Method method : dogMethods) {
-            System.out.println(method.getName() + "-  Return type: "+  method.getReturnType());
+    public static void printMethods(Class<?> objectClass) {
+        LOGGER.info(String.format("Declared methods of %s: ", objectClass.getSimpleName()));
+        for (Method method : objectClass.getDeclaredMethods()) {
+            LOGGER.info(method.getName() + ":");
+            LOGGER.info("    modifiers: " + Modifier.toString(method.getModifiers()));
+            LOGGER.info("    parameter types: " + Arrays.toString(method.getParameterTypes()));
         }
-
-        Printer.printDivider();
-
-        // Calling a public method with reflection, this is not something really useful.
-        // If the method is public you should call it directly from its class
-        for (Method method : dogMethods) {
-            if (method.getName().equals("bark")) {
-                method.invoke(myDog);
-            }
-        }
-
-        Printer.printDivider();
-
-        // Calling a private method with reflection
-        for (Method method : dogMethods) {
-            if (method.getName().equals("eatPlants")) {
-                method.setAccessible(true); // making it accessible
-                method.invoke(myDog);
-            }
-        }
-
-
+        LOGGER.info("\n");
     }
 }

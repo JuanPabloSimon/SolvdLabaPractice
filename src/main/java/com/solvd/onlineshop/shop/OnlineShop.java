@@ -1,6 +1,9 @@
 package com.solvd.onlineshop.shop;
 
 import com.solvd.onlineshop.exceptions.*;
+import com.solvd.onlineshop.interfaces.IAccounts;
+import com.solvd.onlineshop.interfaces.IShop;
+import com.solvd.onlineshop.interfaces.IShopping;
 import com.solvd.onlineshop.lambdas.Discountable;
 import com.solvd.onlineshop.people.Customer;
 import com.solvd.onlineshop.products.Product;
@@ -48,7 +51,7 @@ public class OnlineShop implements IShop, IAccounts, IShopping {
     }
 
     @Override
-    public void signUpCostumer(String username, String firstname, String lastname, int age, String email, String address) {
+    public void signUpCostumer(String username, String firstname, String lastname, Integer age, String email, String address) {
         Customer customer = new Customer(username, firstname, lastname, age, email, address);
         customers.add(customer);
         logInCostumer(customer.getUsername());
@@ -126,7 +129,10 @@ public class OnlineShop implements IShop, IAccounts, IShopping {
         prod.setStock(prod.getStock() + 1);
     }
 
-    public void selectPayment(Customer customer, Payment payment) {
+    public void selectPayment(Customer customer, Payment payment) throws EmptyLinkedListException {
+        if (customer.getProductsInCart().size() == 0) {
+            throw new EmptyLinkedListException("No products in cart");
+        }
         customer.getCart().selectPayment(payment);
     }
 
@@ -135,6 +141,9 @@ public class OnlineShop implements IShop, IAccounts, IShopping {
     }
 
     public void selectDelivery(Customer customer, DeliveryCompany delivery) {
+        if (customer.getProductsInCart().size() == 0) {
+            throw new RuntimeException("No products in cart");
+        }
         if (delivery.isAvailable()) {
             customer.setDelivery(delivery);
         } else {
@@ -142,7 +151,10 @@ public class OnlineShop implements IShop, IAccounts, IShopping {
         }
     }
 
-    public void selectCurrency(Customer customer, Currency currency) {
+    public void selectCurrency(Customer customer, Currency currency) throws EmptyLinkedListException{
+        if (customer.getProductsInCart().size() == 0) {
+            throw new EmptyLinkedListException("No products in cart");
+        }
         if (currency.isAvailable()) {
             customer.setCurrency(currency);
         } else {
@@ -154,8 +166,8 @@ public class OnlineShop implements IShop, IAccounts, IShopping {
     @Override
     public void finishOrder(Customer customer, Predicate<Customer> p, Discountable<Double,Cards> d) throws CartEmptyException, EmptyLinkedListException {
         if (this.isLogged(p, customer.getUsername())) {
-            if (customer.getProductsInCart().getSize() > 0) {
-                customer.getOrder().setProducts(customer.getProductsInCart().getAll());
+            if (customer.getProductsInCart().size() > 0) {
+                customer.getOrder().setProducts(customer.getProductsInCart());
                 customer.getOrder().setCardSelected(customer.getCart().getCard());
                 customer.getOrder().send(d);
                 this.orders.add(customer.getOrder());
@@ -185,7 +197,7 @@ public class OnlineShop implements IShop, IAccounts, IShopping {
         throw new CustomerNotFoundException("Please LogIn");
     }
     public int getTotalPrice(Customer customer, Discountable<Double, Cards> d) throws CartEmptyException, EmptyLinkedListException {
-        if (customer.getProductsInCart().getSize() > 0) {  // Check if there are products
+        if (customer.getProductsInCart().size() > 0) {  // Check if there are products
             Integer total = Calculator.total(customer, d);
             return total;
         } else {
@@ -207,7 +219,7 @@ public class OnlineShop implements IShop, IAccounts, IShopping {
         return this.customers;
     }
     public ArrayList<Product> getCustomerProducts(Customer customer) throws EmptyLinkedListException {
-        return customer.getProductsInCart().getAll();
+        return customer.getProductsInCart();
     }
     // end of section
 }

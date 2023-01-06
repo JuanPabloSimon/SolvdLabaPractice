@@ -78,5 +78,17 @@ public class Cart {
         return this.card;
     }
     // end of section
+
+
+    @Override
+    public String toString() {
+        return "Cart{" +
+                "productsInCart=" + productsInCart +
+                ", cartId=" + cartId +
+                ", payment=" + payment +
+                ", card=" + card +
+                ", rand=" + rand +
+                '}';
+    }
 }
 

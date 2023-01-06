@@ -11,13 +11,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Calculator {
     private static Logger LOGGER = LogManager.getLogger(Calculator.class);
 
-    public static Integer totalProducts(CustomLinkedList<Product> products) throws EmptyLinkedListException {
+    public static Integer totalProducts(ArrayList<Product> products) throws EmptyLinkedListException {
         Integer totalProd = 0;
-        ArrayList<Product> prods = products.getAll();
+        ArrayList<Product> prods = products;
 
         for (Product prod : prods) {
             totalProd += prod.getPrice();

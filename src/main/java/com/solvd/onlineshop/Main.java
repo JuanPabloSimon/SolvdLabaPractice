@@ -49,6 +49,7 @@ public class Main {
         });
         LOGGER.info(shop.getName());
         LOGGER.info("Products of the store: ");
+
         Printer.listProducts(shop.getShopProducts(),
                 (prods) -> {
                     for (Object prod : prods) {
@@ -83,15 +84,15 @@ public class Main {
                 }
                 return false;
             });
-            shop.orderProduct(customer, "Iphone 13", (c) -> {
-                for (Customer custom : shop.getCustomers()) {
-                    if (custom.getUsername().equals(c.getUsername())) {
-                        return true;
-                    }
-                }
-                return false;
-            });// two products selected from the store
-            shop.deleteProduct(customer, "Iphone 13", (c) -> {
+//            shop.orderProduct(customer, "Iphone 13", (c) -> {
+//                for (Customer custom : shop.getCustomers()) {
+//                    if (custom.getUsername().equals(c.getUsername())) {
+//                        return true;
+//                    }
+//                }
+//                return false;
+//            });// two products selected from the store
+            shop.deleteProduct(customer, "Iphone 14", (c) -> {
                 for (Customer custom : shop.getCustomers()) {
                     if (custom.getUsername().equals(c.getUsername())) {
                         return true;
@@ -117,14 +118,19 @@ public class Main {
         Payment payment2 = new Payment("Credit");
         Currency currency = new Currency(CurrencyType.ARS);
 
+        try {
+            shop.selectDelivery(customer, delivery);// Delivery Company Selected
+            LOGGER.info(customer.getOrder().getDeliveryCompany());
+            shop.selectPayment(customer, payment); // Payment Method Selected
+            shop.selectCard(customer, "mastercard");
+            LOGGER.info(customer.getCart().getCard());
+            shop.selectCurrency(customer, currency); // Currency selected
+            LOGGER.info("Currency selected: " + customer.getOrder().getCurrency());
+        } catch(EmptyLinkedListException e) {
+            LOGGER.error(e);
+        }
         // selection of services
-        shop.selectDelivery(customer, delivery);// Delivery Company Selected
-        LOGGER.info(customer.getOrder().getDeliveryCompany());
-        shop.selectPayment(customer, payment); // Payment Method Selected
-        shop.selectCard(customer, "mastercard");
-        LOGGER.info(customer.getCart().getCard());
-        shop.selectCurrency(customer, currency); // Currency selected
-        LOGGER.info("Currency selected: " + customer.getOrder().getCurrency());
+
 
         Printer.printDivider();
         LOGGER.info("Final Values");

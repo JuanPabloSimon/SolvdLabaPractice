@@ -1,5 +1,6 @@
 package com.solvd.onlineshop.people;
 
+import com.solvd.onlineshop.exceptions.EmptyLinkedListException;
 import com.solvd.onlineshop.products.Product;
 import com.solvd.onlineshop.services.Currency;
 import com.solvd.onlineshop.services.DeliveryCompany;
@@ -9,6 +10,7 @@ import com.solvd.onlineshop.utils.customlinkedlist.CustomLinkedList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class Customer extends Person {
@@ -17,11 +19,9 @@ public class Customer extends Person {
     private Cart cart;
     private boolean isInStore;
     private Order order;
-//    private DeliveryCompany delivery;
-//    private Currency currency;
 
     // constructor section
-    public Customer(String username, String firstname, String lastname, int age, String email, String address) {
+    public Customer(String username, String firstname, String lastname, Integer age, String email, String address) {
         super(firstname, lastname, age, email, address);
         this.username = username;
         this.cart = new Cart();
@@ -50,8 +50,8 @@ public class Customer extends Person {
 //        this.currency = currency; // delete this
     }
 
-    public CustomLinkedList<Product> getProductsInCart() {
-        return this.cart.getProducts();
+    public ArrayList<Product> getProductsInCart() {
+        return this.cart.getProducts().getAll();
     }
 
     public Boolean getIsInStore() {
@@ -94,9 +94,9 @@ public class Customer extends Person {
 
     @Override
     public String toString() {
-        return "Costumer{" +
+        return "Customer { " +
                 "username='" + username + '\'' +
-                ", cart products=" + cart +
+                ", cart products=" + getProductsInCart() +
                 ", address='" + address + '\'' +
                 '}';
     }

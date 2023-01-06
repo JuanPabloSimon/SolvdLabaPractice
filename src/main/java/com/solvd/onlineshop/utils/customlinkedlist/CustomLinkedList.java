@@ -40,12 +40,12 @@ public class CustomLinkedList<T> {
         }
     }
 
-    public ArrayList<T> getAll() throws EmptyLinkedListException {
+    public ArrayList<T> getAll() {
         Node<T> currentNode = head;
         ArrayList<T> elements = new ArrayList<>();
 
         if (currentNode == null) {
-            throw new EmptyLinkedListException("The LinkedList is empty.");
+            System.out.println("The LinkedList is empty.");
         }
 
         while (currentNode != null) {
@@ -142,5 +142,13 @@ public class CustomLinkedList<T> {
     @Override
     public int hashCode() {
         return Objects.hash(head);
+    }
+
+    @Override
+    public String toString() {
+        return "CustomLinkedList{" +
+                "head=" + head +
+                ", size=" + size +
+                '}';
     }
 }

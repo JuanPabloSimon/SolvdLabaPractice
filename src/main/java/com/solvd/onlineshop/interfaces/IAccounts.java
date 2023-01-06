@@ -1,4 +1,4 @@
-package com.solvd.onlineshop.shop;
+package com.solvd.onlineshop.interfaces;
 
 import com.solvd.onlineshop.people.Customer;
 
@@ -8,7 +8,7 @@ public interface IAccounts {
 
     public void signUpCostumer(Customer customer);
 
-    public void signUpCostumer(String username, String firstname, String lastname, int age, String email, String address);
+    public void signUpCostumer(String username, String firstname, String lastname, Integer age, String email, String address);
 
     public void logInCostumer(String username);
 
