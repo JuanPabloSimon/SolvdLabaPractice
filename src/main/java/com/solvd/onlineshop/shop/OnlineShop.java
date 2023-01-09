@@ -62,7 +62,7 @@ public class OnlineShop implements IShop, IAccounts, IShopping {
         for (Customer customer : customers) {
             if (customer.getUsername().equals(username))
                 customer.setInStore(true);
-                customer.createOrder();
+            customer.createOrder();
         }
     }
 
@@ -90,9 +90,10 @@ public class OnlineShop implements IShop, IAccounts, IShopping {
 
     // Store
     @Override
-    public void modifyProduct(Product product, BiConsumer<Product, ArrayList<Product>> supplier) {
+    public void manageProducts(Product product, BiConsumer<Product, ArrayList<Product>> supplier) {
         supplier.accept(product, shopProducts);
     }
+
     // Handle Product exception
     @Override
     public void incrementStock(Product prod, Integer stock, BiConsumer<Product, Integer> consumer) {
@@ -112,7 +113,7 @@ public class OnlineShop implements IShop, IAccounts, IShopping {
 
     @Override
     public void orderProduct(Customer customer, String productName, Predicate<Customer> p) throws OutOfStockException, ProductNotFoundException {
-        Product prod = getProduct(customer , productName, p);
+        Product prod = getProduct(customer, productName, p);
         if (prod.getStock() > 0) {
             customer.getCart().addProduct(prod);
             prod.setStock(prod.getStock() - 1);
@@ -140,9 +141,9 @@ public class OnlineShop implements IShop, IAccounts, IShopping {
         customer.getCart().selectCard(card);
     }
 
-    public void selectDelivery(Customer customer, DeliveryCompany delivery) {
+    public void selectDelivery(Customer customer, DeliveryCompany delivery) throws EmptyLinkedListException {
         if (customer.getProductsInCart().size() == 0) {
-            throw new RuntimeException("No products in cart");
+            throw new EmptyLinkedListException("No products in cart");
         }
         if (delivery.isAvailable()) {
             customer.setDelivery(delivery);
@@ -151,7 +152,7 @@ public class OnlineShop implements IShop, IAccounts, IShopping {
         }
     }
 
-    public void selectCurrency(Customer customer, Currency currency) throws EmptyLinkedListException{
+    public void selectCurrency(Customer customer, Currency currency) throws EmptyLinkedListException {
         if (customer.getProductsInCart().size() == 0) {
             throw new EmptyLinkedListException("No products in cart");
         }
@@ -164,7 +165,7 @@ public class OnlineShop implements IShop, IAccounts, IShopping {
 
 
     @Override
-    public void finishOrder(Customer customer, Predicate<Customer> p, Discountable<Double,Cards> d) throws CartEmptyException, EmptyLinkedListException {
+    public void finishOrder(Customer customer, Predicate<Customer> p, Discountable<Double, Cards> d) throws CartEmptyException, EmptyLinkedListException {
         if (this.isLogged(p, customer.getUsername())) {
             if (customer.getProductsInCart().size() > 0) {
                 customer.getOrder().setProducts(customer.getProductsInCart());
@@ -185,6 +186,7 @@ public class OnlineShop implements IShop, IAccounts, IShopping {
     public String getName() {
         return this.name;
     }
+
     public Product getProduct(Customer customer, String productName, Predicate<Customer> p) throws ProductNotFoundException {
         if (this.isLogged(p, customer.getUsername())) {
             for (Product product : shopProducts) {
@@ -196,6 +198,7 @@ public class OnlineShop implements IShop, IAccounts, IShopping {
         }
         throw new CustomerNotFoundException("Please LogIn");
     }
+
     public int getTotalPrice(Customer customer, Discountable<Double, Cards> d) throws CartEmptyException, EmptyLinkedListException {
         if (customer.getProductsInCart().size() > 0) {  // Check if there are products
             Integer total = Calculator.total(customer, d);
@@ -204,6 +207,7 @@ public class OnlineShop implements IShop, IAccounts, IShopping {
             throw new CartEmptyException("There are no Products added in the cart");
         }
     }
+
     public Customer getCustomer(String username) throws CustomerNotFoundException {
         for (Customer customer : customers) {
             if (customer.getUsername().equals(username))
@@ -215,9 +219,11 @@ public class OnlineShop implements IShop, IAccounts, IShopping {
     public ArrayList<Product> getShopProducts() {
         return shopProducts;
     }
+
     public ArrayList<Customer> getCustomers() {
         return this.customers;
     }
+
     public ArrayList<Product> getCustomerProducts(Customer customer) throws EmptyLinkedListException {
         return customer.getProductsInCart();
     }

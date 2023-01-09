@@ -15,7 +15,7 @@ import java.util.function.Predicate;
 public interface IShop {
 
     //This method allows you to add and also remove it
-    public void modifyProduct(Product product, BiConsumer<Product, ArrayList<Product>> modifier);
+    public void manageProducts(Product product, BiConsumer<Product, ArrayList<Product>> modifier);
 
     public List<Product> filterProdByPrice(Double maxValue, Double Double);
 

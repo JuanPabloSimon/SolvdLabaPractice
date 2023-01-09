@@ -6,7 +6,6 @@ import com.solvd.onlineshop.services.Currency;
 import com.solvd.onlineshop.services.DeliveryCompany;
 import com.solvd.onlineshop.shop.Cart;
 import com.solvd.onlineshop.shop.Order;
-import com.solvd.onlineshop.utils.customlinkedlist.CustomLinkedList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -28,9 +27,8 @@ public class Customer extends Person {
     }
 
 
-
     // end of section
-    public  void createOrder() {
+    public void createOrder() {
         this.order = new Order(this);
     }
 
@@ -50,13 +48,14 @@ public class Customer extends Person {
 //        this.currency = currency; // delete this
     }
 
-    public ArrayList<Product> getProductsInCart() {
+    public ArrayList<Product> getProductsInCart() throws EmptyLinkedListException {
         return this.cart.getProducts().getAll();
     }
 
     public Boolean getIsInStore() {
         return this.isInStore;
     }
+
     public String getUsername() {
         return this.username;
     }
@@ -68,14 +67,6 @@ public class Customer extends Person {
     public Order getOrder() {
         return order;
     }
-
-//    public DeliveryCompany getDelivery() {
-//        return this.delivery;
-//    }
-
-//    public Currency getCurrency() {
-//        return this.currency;
-//    }
 
     // end of section
 
@@ -96,7 +87,7 @@ public class Customer extends Person {
     public String toString() {
         return "Customer { " +
                 "username='" + username + '\'' +
-                ", cart products=" + getProductsInCart() +
+                ", cart products=" + getCart().getProducts().getSize() +
                 ", address='" + address + '\'' +
                 '}';
     }

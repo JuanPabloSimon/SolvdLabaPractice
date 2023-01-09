@@ -57,9 +57,9 @@ public class Printer {
                     }
                 });
         Double total = discounter.apply(prodsValue + deliveryValue, customer.getCart().getCard());
-        LOGGER.info("Total Products Value: " + customer.getOrder().getCurrency().getCurrencyType().getCurrencySymbol() + prodsValue.intValue());
-        LOGGER.info("Delivery Value: " + customer.getOrder().getCurrency().getCurrencyType().getCurrencySymbol() + deliveryValue.intValue());
-        LOGGER.info("Total: " + customer.getOrder().getCurrency().getCurrencyType().getCurrencySymbol() + total.intValue());
+        LOGGER.info("Total Products Value: " + customer.getOrder().getCurrencySymbol() + prodsValue.intValue());
+        LOGGER.info("Delivery Value: " + customer.getOrder().getCurrencySymbol() + deliveryValue.intValue());
+        LOGGER.info("Total: " + customer.getOrder().getCurrencySymbol() + total.intValue());
     }
 
 }

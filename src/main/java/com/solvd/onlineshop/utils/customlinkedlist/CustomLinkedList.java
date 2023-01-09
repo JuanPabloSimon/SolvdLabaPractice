@@ -1,7 +1,7 @@
 package com.solvd.onlineshop.utils.customlinkedlist;
 
-import com.solvd.onlineshop.exceptions.EmptyLinkedListException;
 import com.solvd.onlineshop.exceptions.ElementNotFoundException;
+import com.solvd.onlineshop.exceptions.EmptyLinkedListException;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -40,12 +40,12 @@ public class CustomLinkedList<T> {
         }
     }
 
-    public ArrayList<T> getAll() {
+    public ArrayList<T> getAll() throws EmptyLinkedListException {
         Node<T> currentNode = head;
         ArrayList<T> elements = new ArrayList<>();
 
         if (currentNode == null) {
-            System.out.println("The LinkedList is empty.");
+            throw new EmptyLinkedListException("The LinkedList is empty.");
         }
 
         while (currentNode != null) {
@@ -85,23 +85,7 @@ public class CustomLinkedList<T> {
 
         return current.getData();
     }
-
-    public void remove(int index) {
-        if (index < 0 || index >= size) {
-            throw new IndexOutOfBoundsException();
-        }
-
-        if (index == 0) {
-            head = head.getNextNode();
-        } else {
-            Node<T> current = head;
-            for (int i = 0; i < index - 1; i++) {
-                current = current.getNextNode();
-            }
-            current = current.getNextNode().getNextNode();
-        }
-        size--;
-    }
+    
 
     public void deleteAt(int index) throws ElementNotFoundException {
 

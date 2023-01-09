@@ -45,7 +45,7 @@ public class Order {
     // end of section
 
     // methods section
-    public int calculatesTotal(Discountable<Double,Cards> d) throws EmptyLinkedListException {
+    public int calculatesTotal(Discountable<Double, Cards> d) throws EmptyLinkedListException {
         Integer total = Calculator.total(customer, d);
         return total;
     }
@@ -59,8 +59,7 @@ public class Order {
                 this.state = OrderState.COMPLETED;
                 LOGGER.info(state.getValue());
             }
-        }
-        else {
+        } else {
             this.state = OrderState.FAILED;
         }
     }
@@ -110,6 +109,10 @@ public class Order {
         return currency;
     }
 
+    public String getCurrencySymbol() {
+        return currency.getCurrencyType().getCurrencySymbol();
+    }
+
     // end of section
 
 
@@ -120,7 +123,7 @@ public class Order {
                 ", \norderId= '" + orderId + '\'' +
                 ", \ndeliveryCompany= " + deliveryCompany +
                 ", \ncardSelected= " + cardSelected +
-                ", \ntotalValue= $  " + totalValue +
+                ", \ntotalValue= " + this.getCurrencySymbol() + totalValue +
                 ", \nproducts=" + products +
                 ", \ncustomer= {" + customer.getUsername() + ", address= '" + customer.getAddress() +
                 "}, \ncurrency=" + currency +
